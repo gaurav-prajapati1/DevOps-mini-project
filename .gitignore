@@ -1,0 +1,15 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Private Keys
+*.pem
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
