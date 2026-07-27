@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: ./app
+
+    container_name: devops-container
+
+    ports:
+      - "80:80"
+
+    restart: unless-stopped
