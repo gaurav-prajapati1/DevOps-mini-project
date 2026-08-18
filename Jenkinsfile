@@ -2,36 +2,40 @@ pipeline {
     agent any
 
     environment {
-        APP_SERVER = "10.0.2.205"
+        APP_DIR = "/opt/DevOps-mini-project"
     }
 
     stages {
 
-        stage('Deploy Application') {
+        stage('Check Server') {
             steps {
                 sh '''
-                    ssh root@${APP_SERVER} '
-                        set -e
+                    whoami
+                    hostname
+                    cd ${APP_DIR}
+                    pwd
+                '''
+            }
+        }
 
-                        echo "===== Getting latest production code ====="
+        stage('Pull Latest Production Code') {
+            steps {
+                sh '''
+                    cd ${APP_DIR}
 
-                        cd /opt/DevOps-mini-project
+                    git fetch origin production
+                    git pull origin production
+                '''
+            }
+        }
 
-                        git fetch origin production
-                        git reset --hard origin/production
+        stage('Deploy with Docker Compose') {
+            steps {
+                sh '''
+                    cd ${APP_DIR}
 
-                        echo "===== Stopping old Docker Compose ====="
-
-                        docker compose down
-
-                        echo "===== Building and starting new Docker Compose ====="
-
-                        docker compose up -d --build
-
-                        echo "===== Deployment completed ====="
-
-                        docker compose ps
-                    '
+                    docker compose down
+                    docker compose up -d --build
                 '''
             }
         }
@@ -39,13 +43,10 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                    ssh root@${APP_SERVER} '
-                        echo "===== Docker Containers ====="
-                        docker ps
+                    cd ${APP_DIR}
 
-                        echo "===== Website Test ====="
-                        curl -I http://localhost
-                    '
+                    docker compose ps
+                    docker ps --filter name=devops-container
                 '''
             }
         }
