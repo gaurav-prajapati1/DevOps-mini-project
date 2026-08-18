@@ -1,12 +1,462 @@
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic HTML Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaurav Prajapati — Cloud & DevOps Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink-900:#0A0E14;
+  --ink-800:#12171F;
+  --ink-700:#1B2230;
+  --paper:#ECE8DF;
+  --paper-dim:#A9B1BC;
+  --mist:#748094;
+  --amber:#E0A860;
+  --cyan:#74B4C2;
+  --font-display:'Space Grotesk', sans-serif;
+  --font-body:'IBM Plex Sans', sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink-900);
+  color:var(--paper);
+  font-family:var(--font-body);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ambient glow blobs — dynamic, not grid-based */
+.glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.35;}
+.glow-a{width:520px;height:520px;background:radial-gradient(circle, var(--cyan), transparent 70%);top:-160px;right:-120px;}
+.glow-b{width:460px;height:460px;background:radial-gradient(circle, var(--amber), transparent 70%);bottom:10%;left:-160px;opacity:0.18;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 52px;
+  background:rgba(10,14,20,0.75);backdrop-filter:blur(16px);
+}
+.nav-logo{font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.04em;color:var(--paper);text-decoration:none;display:flex;align-items:center;gap:8px;}
+.nav-logo .dot{width:6px;height:6px;border-radius:50%;background:var(--amber);display:inline-block;box-shadow:0 0 8px var(--amber);}
+.nav-links{display:flex;align-items:center;gap:34px;list-style:none;}
+.nav-links a{font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--mist);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--amber);}
+.btn-primary{background:var(--amber);color:var(--ink-900);border:none;border-radius:999px;padding:11px 24px;font-family:var(--font-mono);font-size:12px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:opacity .2s, transform .15s;letter-spacing:0.03em;text-transform:uppercase;}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px);}
+.btn-ghost{background:rgba(255,255,255,0.03);color:var(--paper);border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:11px 24px;font-family:var(--font-mono);font-size:12px;font-weight:400;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:border-color .2s, color .2s, transform .15s;letter-spacing:0.03em;text-transform:uppercase;}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-2px);}
+
+/* HERO */
+.hero{min-height:100vh;padding:0 52px;padding-top:80px;position:relative;z-index:1;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:40px;}
+.hero-content{position:relative;z-index:1;}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--amber);}
+.hero-headline{font-family:var(--font-display);font-size:clamp(46px,6vw,80px);font-weight:600;line-height:1.02;letter-spacing:-0.02em;color:var(--paper);margin-bottom:24px;}
+.hero-headline .accent{color:var(--cyan);}
+.hero-sub{font-size:16px;font-weight:300;color:var(--paper-dim);max-width:460px;line-height:1.75;margin-bottom:36px;}
+.hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+
+/* Dynamic flowing hero visual */
+.hero-visual{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;}
+.orb-stage{position:relative;width:min(440px,42vw);height:min(440px,42vw);animation:floatY 7s ease-in-out infinite;}
+.orb-stage svg{width:100%;height:100%;overflow:visible;}
+@keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+@keyframes spinCW{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spinCCW{from{transform:rotate(0deg);}to{transform:rotate(-360deg);}}
+@keyframes pulseDot{0%,100%{r:5;opacity:0.9;}50%{r:7;opacity:1;}}
+@keyframes flow{0%{stroke-dashoffset:280;}100%{stroke-dashoffset:0;}}
+.ring-outer{animation:spinCW 30s linear infinite;transform-origin:center;}
+.ring-inner{animation:spinCCW 22s linear infinite;transform-origin:center;}
+.flow-path{animation:flow 6s linear infinite;}
+
+/* SPEC STRIP — flowing marquee, no borders */
+.spec-strip{padding:16px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:1;}
+.spec-inner{display:inline-flex;animation:ticker 34s linear infinite;}
+.spec-item{display:inline-flex;align-items:center;gap:18px;padding:0 18px;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.06em;color:var(--mist);}
+.spec-sep{color:var(--amber);}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* WRAPPER */
+.wrapper{max-width:1180px;margin:0 auto;padding:0 52px;position:relative;z-index:1;}
+.section-block{padding:100px 0;}
+.section-label{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:52px;display:flex;align-items:center;gap:14px;}
+.section-label::after{content:'';flex:1;max-width:70px;height:1px;background:linear-gradient(90deg, rgba(224,168,96,0.5), transparent);}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;}
+.about-headline{font-family:var(--font-display);font-size:clamp(30px,3.4vw,44px);font-weight:600;line-height:1.15;letter-spacing:-0.015em;color:var(--paper);}
+.about-headline .accent{color:var(--cyan);}
+.about-body{font-size:15px;font-weight:300;color:var(--paper-dim);line-height:1.85;margin-bottom:18px;}
+.about-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+.stat-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px;}
+.stat-pill{flex:1 1 160px;background:linear-gradient(155deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));border:1px solid rgba(255,255,255,0.07);border-radius:28px;padding:26px 24px;transition:transform .2s, border-color .2s;}
+.stat-pill:hover{transform:translateY(-4px);border-color:rgba(116,180,194,0.4);}
+.stat-num{font-family:var(--font-display);font-size:34px;font-weight:600;letter-spacing:-0.02em;color:var(--cyan);line-height:1;margin-bottom:8px;}
+.stat-label{font-family:var(--font-mono);font-size:10.5px;color:var(--mist);text-transform:uppercase;letter-spacing:0.03em;}
+
+/* SKILLS */
+.skills-intro{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:end;margin-bottom:48px;}
+.skills-headline{font-family:var(--font-display);font-size:clamp(28px,3vw,40px);font-weight:600;line-height:1.15;letter-spacing:-0.015em;color:var(--paper);}
+.skills-headline .accent{color:var(--cyan);}
+.skills-desc{font-size:15px;font-weight:300;color:var(--mist);line-height:1.7;}
+.skills-flow{display:flex;flex-wrap:wrap;gap:16px;}
+.skill-pill{flex:1 1 260px;background:linear-gradient(160deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.07);border-radius:28px;padding:28px 26px;transition:transform .2s, border-color .2s;}
+.skill-pill:hover{transform:translateY(-4px);border-color:rgba(224,168,96,0.4);}
+.skill-cat{font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:0.07em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;}
+.skill-name{font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--paper);margin-bottom:14px;}
+.tags{display:flex;flex-wrap:wrap;gap:7px;}
+.tag{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--paper-dim);border-radius:999px;padding:4px 13px;font-family:var(--font-mono);font-size:10.5px;}
+
+/* EXPERIENCE */
+.exp-layout{display:grid;grid-template-columns:250px 1fr;gap:72px;}
+.exp-sticky{font-family:var(--font-display);font-size:clamp(24px,2.6vw,36px);font-weight:600;line-height:1.2;letter-spacing:-0.015em;color:var(--paper);position:sticky;top:100px;}
+.exp-sticky .accent{color:var(--cyan);}
+.exp-entries{display:flex;flex-direction:column;gap:4px;}
+.exp-entry{padding:32px 30px;border-radius:28px;background:linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.06);}
+.exp-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:6px;flex-wrap:wrap;}
+.exp-title{font-family:var(--font-display);font-size:20px;font-weight:600;letter-spacing:-0.01em;color:var(--paper);}
+.exp-date{font-family:var(--font-mono);font-size:11px;color:var(--amber);letter-spacing:0.03em;white-space:nowrap;margin-top:4px;}
+.exp-co{font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--cyan);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:18px;}
+.exp-points{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.exp-points li{font-size:14px;font-weight:300;color:var(--paper-dim);line-height:1.7;padding-left:20px;position:relative;}
+.exp-points li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--cyan);}
+
+/* PROJECTS */
+.proj-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:44px;gap:32px;flex-wrap:wrap;}
+.proj-headline{font-family:var(--font-display);font-size:clamp(28px,3.6vw,44px);font-weight:600;line-height:1.1;letter-spacing:-0.02em;color:var(--paper);}
+.proj-headline .accent{color:var(--cyan);}
+.proj-card{background:linear-gradient(160deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.07);border-radius:32px;padding:40px;margin-bottom:16px;display:grid;grid-template-columns:1fr 48px;gap:28px;align-items:start;transition:border-color .2s, transform .2s;}
+.proj-card:hover{border-color:rgba(116,180,194,0.4);transform:translateY(-3px);}
+.proj-num{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:0.06em;color:var(--amber);margin-bottom:12px;}
+.proj-title{font-family:var(--font-display);font-size:20px;font-weight:600;letter-spacing:-0.01em;color:var(--paper);margin-bottom:14px;}
+.proj-desc{font-size:14px;font-weight:300;color:var(--paper-dim);line-height:1.75;margin-bottom:16px;}
+.proj-arrow{width:44px;height:44px;border:1px solid rgba(255,255,255,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mist);font-size:15px;flex-shrink:0;transition:border-color .2s,color .2s;margin-top:4px;}
+.proj-card:hover .proj-arrow{border-color:var(--cyan);color:var(--cyan);}
+
+/* CERTS */
+.certs-flow{display:flex;flex-wrap:wrap;gap:16px;margin-top:44px;}
+.cert-card{flex:1 1 280px;background:linear-gradient(160deg, rgba(255,255,255,0.045), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.07);border-radius:28px;padding:30px 28px;transition:transform .2s, border-color .2s;display:flex;flex-direction:column;gap:8px;}
+.cert-card:hover{transform:translateY(-4px);border-color:rgba(224,168,96,0.4);}
+.cert-title{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--paper);line-height:1.35;}
+.cert-org{font-family:var(--font-mono);font-size:11px;color:var(--mist);letter-spacing:0.02em;}
+.cert-year{font-family:var(--font-mono);font-size:10.5px;color:var(--amber);letter-spacing:0.05em;margin-top:auto;padding-top:12px;}
+
+/* EDUCATION */
+.edu-row{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 30px;border-radius:24px;margin-bottom:12px;background:linear-gradient(160deg, rgba(255,255,255,0.035), rgba(255,255,255,0.006));border:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;}
+.edu-degree{font-family:var(--font-display);font-size:18px;font-weight:600;letter-spacing:-0.01em;color:var(--paper);margin-bottom:6px;}
+.edu-school{font-family:var(--font-mono);font-size:12px;color:var(--mist);}
+.edu-score{font-family:var(--font-display);font-size:28px;font-weight:600;color:var(--cyan);letter-spacing:-0.02em;text-align:right;line-height:1;}
+.edu-score-sub{font-family:var(--font-mono);font-size:10px;color:var(--mist);letter-spacing:0.05em;text-align:right;margin-top:4px;text-transform:uppercase;}
+
+/* CONTACT */
+.contact-full{padding:100px 52px 120px;text-align:center;position:relative;z-index:1;}
+.contact-headline{font-family:var(--font-display);font-size:clamp(38px,6.5vw,80px);font-weight:600;line-height:1.05;letter-spacing:-0.02em;color:var(--paper);margin-bottom:24px;max-width:820px;margin-left:auto;margin-right:auto;}
+.contact-headline .accent{color:var(--cyan);}
+.contact-sub{font-size:15px;font-weight:300;color:var(--mist);margin-bottom:44px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.7;}
+.contact-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+
+/* FOOTER */
+footer{padding:32px 52px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;z-index:1;}
+.footer-l{font-family:var(--font-mono);font-size:11px;color:var(--mist);}
+.footer-r{font-family:var(--font-mono);font-size:11px;color:var(--mist);display:flex;align-items:center;gap:8px;}
+.footer-r .dot{width:5px;height:5px;border-radius:50%;background:var(--amber);}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+.reveal.in{opacity:1;transform:none;}
+
+@media (max-width:1000px){
+  .hero{grid-template-columns:1fr;padding:120px 24px 72px;min-height:unset;gap:52px;}
+  .orb-stage{width:280px;height:280px;}
+}
+@media (max-width:900px){
+  nav{padding:16px 24px;} .nav-links{display:none;}
+  .wrapper{padding:0 24px;}
+  .about-grid,.skills-intro,.exp-layout{grid-template-columns:1fr;gap:36px;}
+  .exp-sticky{position:static;}
+  .proj-card{grid-template-columns:1fr;} .proj-arrow{display:none;}
+  .contact-full{padding:64px 24px 96px;}
+  footer{flex-direction:column;text-align:center;}
+}
+</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0W1NGSBYW8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0W1NGSBYW8');
+    </script>
 </head>
 <body>
-    <h1>Hello, World!</h1>
-    <p>This is a starter HTML template.</p>
+
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+
+<nav>
+  <a class="nav-logo" href="#"><span class="dot"></span>GAURAV PRAJAPATI</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="btn-primary" href="mailto:gauravprajapati111@outlook.com">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Cloud &amp; DevOps · Delhi, India</p>
+    <h1 class="hero-headline">Gaurav Prajapati.<br>Infrastructure, <span class="accent">deployed.</span></h1>
+    <p class="hero-sub">BCA student building on AWS Cloud, Linux, and Python — designing, deploying, and scaling real infrastructure rather than just reading about it.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#projects">View Work</a>
+      <a class="btn-ghost" href="https://linkedin.com/in/p-gaurav" target="_blank">LinkedIn</a>
+      <a class="btn-ghost" href="https://github.com/gaurav-prajapati1" target="_blank">GitHub</a>
+      <a class="btn-ghost" href="https://portfolio.gauravprajapati.fun" target="_blank">Portfolio</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="orb-stage">
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#74B4C2" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#74B4C2" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- flowing orbit rings, no straight lines -->
+        <g class="ring-outer">
+          <ellipse cx="200" cy="200" rx="180" ry="140" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+        </g>
+        <g class="ring-inner">
+          <ellipse cx="200" cy="200" rx="140" ry="175" fill="none" stroke="rgba(224,168,96,0.12)" stroke-width="1"/>
+        </g>
+
+        <!-- flowing data curve -->
+        <path class="flow-path" d="M40,220 C110,120 290,320 360,180" fill="none" stroke="#74B4C2" stroke-width="2" stroke-linecap="round" stroke-dasharray="10 18" opacity="0.85"/>
+        <path d="M40,220 C110,120 290,320 360,180" fill="none" stroke="rgba(116,180,194,0.15)" stroke-width="1"/>
+
+        <!-- soft glowing core -->
+        <circle cx="200" cy="200" r="90" fill="url(#coreGlow)" opacity="0.5"/>
+        <circle cx="200" cy="200" r="46" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="7" fill="#ECE8DF">
+          <animate attributeName="r" values="6;9;6" dur="3s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- orbiting nodes -->
+        <circle cx="200" cy="60" r="5" fill="#E0A860" class="pulse-node" style="animation:pulseDot 2.6s ease-in-out infinite;"/>
+        <circle cx="340" cy="230" r="4" fill="#74B4C2" style="animation:pulseDot 3.2s .4s ease-in-out infinite;"/>
+        <circle cx="90" cy="310" r="4" fill="#ECE8DF" style="animation:pulseDot 2.9s .8s ease-in-out infinite;" opacity="0.7"/>
+
+        <text x="200" y="368" text-anchor="middle" fill="#748094" font-size="9" font-family="IBM Plex Mono" letter-spacing="0.15em">EC2 · S3 · ALB · IAM</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- SPEC STRIP -->
+<div class="spec-strip">
+  <div class="spec-inner">
+    <span class="spec-item">AWS EC2<span class="spec-sep">/</span></span>
+    <span class="spec-item">Amazon S3<span class="spec-sep">/</span></span>
+    <span class="spec-item">IAM<span class="spec-sep">/</span></span>
+    <span class="spec-item">Auto Scaling Groups<span class="spec-sep">/</span></span>
+    <span class="spec-item">Application Load Balancer<span class="spec-sep">/</span></span>
+    <span class="spec-item">Custom AMI<span class="spec-sep">/</span></span>
+    <span class="spec-item">Nginx<span class="spec-sep">/</span></span>
+    <span class="spec-item">Linux<span class="spec-sep">/</span></span>
+    <span class="spec-item">Python<span class="spec-sep">/</span></span>
+    <span class="spec-item">DNS Configuration<span class="spec-sep">/</span></span>
+    <span class="spec-item">Git &amp; GitHub<span class="spec-sep">/</span></span>
+    <span class="spec-item">CI/CD<span class="spec-sep">/</span></span>
+    <span class="spec-item">AWS EC2<span class="spec-sep">/</span></span>
+    <span class="spec-item">Amazon S3<span class="spec-sep">/</span></span>
+    <span class="spec-item">IAM<span class="spec-sep">/</span></span>
+    <span class="spec-item">Auto Scaling Groups<span class="spec-sep">/</span></span>
+    <span class="spec-item">Application Load Balancer<span class="spec-sep">/</span></span>
+    <span class="spec-item">Custom AMI<span class="spec-sep">/</span></span>
+    <span class="spec-item">Nginx<span class="spec-sep">/</span></span>
+    <span class="spec-item">Linux<span class="spec-sep">/</span></span>
+    <span class="spec-item">Python<span class="spec-sep">/</span></span>
+    <span class="spec-item">DNS Configuration<span class="spec-sep">/</span></span>
+    <span class="spec-item">Git &amp; GitHub<span class="spec-sep">/</span></span>
+    <span class="spec-item">CI/CD<span class="spec-sep">/</span></span>
+  </div>
+</div>
+
+<div class="wrapper">
+  <!-- ABOUT -->
+  <section id="about" class="section-block">
+    <p class="section-label reveal">About</p>
+    <div class="about-grid">
+      <div class="reveal">
+        <h2 class="about-headline">Learning fast, <span class="accent">shipping real infrastructure.</span></h2>
+        <div class="stat-row">
+          <div class="stat-pill"><div class="stat-num">2</div><div class="stat-label">AWS Projects Deployed</div></div>
+          <div class="stat-pill"><div class="stat-num">2</div><div class="stat-label">Certifications Earned</div></div>
+          <div class="stat-pill"><div class="stat-num">2mo</div><div class="stat-label">Cloud &amp; DevOps Internship</div></div>
+          <div class="stat-pill"><div class="stat-num">80%</div><div class="stat-label">Class XII Score</div></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="about-body">Motivated BCA student with a strong foundation in Python, Linux, and Cloud Computing, seeking opportunities to apply programming skills and problem-solving abilities to challenging infrastructure work.</p>
+        <p class="about-body">Currently interning as an AWS Cloud &amp; DevOps Intern at Sharajman Technologies, gaining hands-on experience with cloud deployment, automation, and CI/CD — while continuing to build and document production-grade AWS projects independently.</p>
+        <div class="about-links">
+          <a class="btn-ghost" href="mailto:gauravprajapati111@outlook.com">Email</a>
+          <a class="btn-ghost" href="tel:+919170659682">+91 91706 59682</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="section-block">
+    <p class="section-label reveal">Skills</p>
+    <div class="skills-intro reveal">
+      <h2 class="skills-headline">Practical tools, <span class="accent">real deployments.</span></h2>
+      <p class="skills-desc">From DNS configuration to auto-scaling EC2 fleets — a toolkit built one deployment at a time.</p>
+    </div>
+    <div class="skills-flow reveal">
+      <div class="skill-pill"><div class="skill-cat">Programming</div><div class="skill-name">Python</div><div class="tags"><span class="tag">Python</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Cloud</div><div class="skill-name">AWS Cloud</div><div class="tags"><span class="tag">EC2</span><span class="tag">S3</span><span class="tag">IAM</span><span class="tag">ALB</span><span class="tag">AMI</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Compute</div><div class="skill-name">Auto Scaling</div><div class="tags"><span class="tag">Auto Scaling Groups</span><span class="tag">Launch Templates</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Operating System</div><div class="skill-name">Linux</div><div class="tags"><span class="tag">Ubuntu</span><span class="tag">Shell</span><span class="tag">Server Mgmt</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Web Server</div><div class="skill-name">Nginx</div><div class="tags"><span class="tag">Reverse Proxy</span><span class="tag">Static Files</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Web Hosting</div><div class="skill-name">DNS &amp; Deployment</div><div class="tags"><span class="tag">DNS Configuration</span><span class="tag">Custom Domains</span><span class="tag">Elastic IP</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">DevOps</div><div class="skill-name">CI/CD &amp; VCS</div><div class="tags"><span class="tag">Git</span><span class="tag">GitHub</span><span class="tag">CI/CD Concepts</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Writing</div><div class="skill-name">Technical Docs</div><div class="tags"><span class="tag">LinkedIn Articles</span><span class="tag">Deployment Guides</span></div></div>
+      <div class="skill-pill"><div class="skill-cat">Learning</div><div class="skill-name">C &amp; C++</div><div class="tags"><span class="tag">Fundamentals</span><span class="tag">In Progress</span></div></div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="section-block">
+    <p class="section-label reveal">Experience</p>
+    <div class="exp-layout">
+      <div class="reveal"><h2 class="exp-sticky">Where the <span class="accent">real learning</span> happens.</h2></div>
+      <div class="exp-entries">
+        <div class="exp-entry reveal">
+          <div class="exp-header">
+            <h3 class="exp-title">AWS Cloud &amp; DevOps Intern</h3>
+            <span class="exp-date">June 2026 — Present</span>
+          </div>
+          <div class="exp-co">Sharajman Technologies · Noida</div>
+          <ul class="exp-points">
+            <li>Gaining hands-on experience with AWS Cloud services, Linux system administration, and DevOps tooling in a production environment.</li>
+            <li>Working with Git, GitHub, and CI/CD concepts to understand how modern engineering teams ship software reliably.</li>
+            <li>Building practical knowledge of cloud deployment workflows, server management, and automation practices that bridge development with operations.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="section-block">
+    <p class="section-label reveal">Projects</p>
+    <div class="proj-header reveal"><h2 class="proj-headline">Built and <span class="accent">shipped.</span></h2></div>
+    <div>
+      <div class="proj-card reveal">
+        <div>
+          <div class="proj-num">01 / Portfolio Deployment</div>
+          <div class="proj-title">AWS EC2 Deployment with Nginx &amp; Elastic IP</div>
+          <p class="proj-desc">Deployed a production-grade portfolio on AWS EC2 with Nginx configured as a reverse proxy and static file server. Allocated and associated an Elastic IP to guarantee a persistent, static public endpoint, then configured DNS A-records to map a custom domain for professional, reliable hosting.</p>
+          <p class="proj-desc">Documented the full deployment workflow as a technical article on LinkedIn Pulse — turning a working project into a resource for others.</p>
+          <div class="tags"><span class="tag">AWS EC2</span><span class="tag">Nginx</span><span class="tag">Elastic IP</span><span class="tag">DNS</span><span class="tag">Linux</span></div>
+        </div>
+        <a class="proj-arrow" href="https://portfolio.gauravprajapati.fun" target="_blank">↗</a>
+      </div>
+      <div class="proj-card reveal">
+        <div>
+          <div class="proj-num">02 / Auto Scaling Group</div>
+          <div class="proj-title">On-Demand EC2 Auto Scaling Configuration</div>
+          <p class="proj-desc">Designed and configured an AWS Auto Scaling Group to automatically scale EC2 instances based on real-time demand. Built a custom AMI and Launch Template for consistent, repeatable instance provisioning, with minimum, desired, and maximum counts tuned to balance cost and performance.</p>
+          <p class="proj-desc">Integrated an Application Load Balancer to distribute traffic across instances, then validated dynamic scaling by simulating load — confirming automated launch and termination of instances.</p>
+          <div class="tags"><span class="tag">Auto Scaling Group</span><span class="tag">EC2</span><span class="tag">AMI</span><span class="tag">ALB</span><span class="tag">Launch Template</span></div>
+        </div>
+        <div class="proj-arrow">↗</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTS -->
+  <section class="section-block">
+    <p class="section-label reveal">Certifications</p>
+    <h2 class="proj-headline reveal">Credentials that <span class="accent">validate.</span></h2>
+    <div class="certs-flow reveal">
+      <div class="cert-card"><div class="cert-title">Problem Solving Techniques</div><div class="cert-org">CodeTantra · Course ID: 25BCA401SEC01</div><div class="cert-year">Nov 2025</div></div>
+      <div class="cert-card"><div class="cert-title">Web Development Training</div><div class="cert-org">Webs Jyoti · 30 Hours Training</div><div class="cert-year">Nov 2025</div></div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="section-block">
+    <p class="section-label reveal">Education</p>
+    <h2 class="proj-headline reveal">Foundations <span class="accent">in progress.</span></h2>
+    <div style="margin-top:44px">
+      <div class="edu-row reveal">
+        <div><div class="edu-degree">Bachelor of Computer Application (BCA), Computer Science</div><div class="edu-school">St. Andrews Institute of Technology &amp; Management · Delhi · Aug 2025 – Sep 2028</div></div>
+        <div><div class="edu-score" style="font-size:16px;color:var(--mist)">In Progress</div></div>
+      </div>
+      <div class="edu-row reveal">
+        <div><div class="edu-degree">Intermediate (Class XII) — PCB</div><div class="edu-school">C.P.V.N. Inter College · Farrukhabad, UP · Apr 2025</div></div>
+        <div><div class="edu-score">80.04%</div><div class="edu-score-sub">Percentage</div></div>
+      </div>
+      <div class="edu-row reveal">
+        <div><div class="edu-degree">High School (Class X)</div><div class="edu-school">C.P.V.N. Inter College · Farrukhabad, UP · Apr 2023</div></div>
+        <div><div class="edu-score">72.83%</div><div class="edu-score-sub">Percentage</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CONTACT -->
+<div id="contact" class="contact-full">
+  <p class="section-label reveal" style="justify-content:center;margin-bottom:36px">Contact</p>
+  <h2 class="contact-headline reveal">Let's build something <span class="accent">together.</span></h2>
+  <p class="contact-sub reveal">Open to internships, cloud projects, and anyone who wants to teach me something new.</p>
+  <div class="contact-btns reveal">
+    <a class="btn-primary" href="mailto:gauravprajapati111@outlook.com">Send a Message</a>
+    <a class="btn-ghost" href="https://linkedin.com/in/p-gaurav" target="_blank">LinkedIn</a>
+    <a class="btn-ghost" href="https://github.com/gaurav-prajapati1" target="_blank">GitHub</a>
+    <a class="btn-ghost" href="https://portfolio.gauravprajapati.fun" target="_blank">Portfolio</a>
+    <a class="btn-ghost" href="tel:+919170659682">+91 91706 59682</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-l">© 2026 Gaurav Prajapati. All rights reserved.</div>
+  <div class="footer-r"><span class="dot"></span>Delhi, India</div>
+</footer>
+
+<script>
+  const revEls = document.querySelectorAll('.reveal');
+  const revObs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); revObs.unobserve(e.target); } });
+  },{threshold:0.08, rootMargin:'0px 0px -32px 0px'});
+  revEls.forEach(el=>revObs.observe(el));
+
+  const navSections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', ()=>{
+    let cur='';
+    navSections.forEach(s=>{ if(window.scrollY >= s.offsetTop - 140) cur = s.id; });
+    navLinks.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href') === '#'+cur); });
+  });
+</script>
 </body>
 </html>
