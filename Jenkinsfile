@@ -2,44 +2,35 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "devops-mini-project"
         APP_SERVER = "10.0.2.205"
     }
 
     stages {
 
-        stage('Build Docker Image') {
-            steps {
-                dir('app') {
-                    sh 'docker build -t $IMAGE_NAME:latest .'
-                }
-            }
-        }
-
-        stage('Transfer Image to Application Server') {
+        stage('Deploy Application') {
             steps {
                 sh '''
-                    docker save ${IMAGE_NAME}:latest -o app-image.tar
+                    ssh root@${APP_SERVER} '
+                        set -e
 
-                    scp app-image.tar ubuntu@${APP_SERVER}:/home/ubuntu/
-                '''
-            }
-        }
+                        echo "===== Getting latest production code ====="
 
-        stage('Deploy on Application Server') {
-            steps {
-                sh '''
-                    ssh ubuntu@${APP_SERVER} '
-                        docker load -i /home/ubuntu/app-image.tar
+                        cd /opt/DevOps-mini-project
 
-                        docker rm -f devops-container || true
+                        git fetch origin production
+                        git reset --hard origin/production
 
-                        docker run -d \
-                          --name devops-container \
-                          -p 80:80 \
-                          devops-mini-project:latest
+                        echo "===== Stopping old Docker Compose ====="
 
-                        rm -f /home/ubuntu/app-image.tar
+                        docker compose down
+
+                        echo "===== Building and starting new Docker Compose ====="
+
+                        docker compose up -d --build
+
+                        echo "===== Deployment completed ====="
+
+                        docker compose ps
                     '
                 '''
             }
@@ -48,8 +39,13 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                    ssh ubuntu@${APP_SERVER} \
-                    "docker ps --filter name=devops-container"
+                    ssh root@${APP_SERVER} '
+                        echo "===== Docker Containers ====="
+                        docker ps
+
+                        echo "===== Website Test ====="
+                        curl -I http://localhost
+                    '
                 '''
             }
         }
